@@ -1,0 +1,6 @@
+@ZatcaIntegrator.API_HostAddress = http://localhost:5187
+
+GET {{ZatcaIntegrator.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
