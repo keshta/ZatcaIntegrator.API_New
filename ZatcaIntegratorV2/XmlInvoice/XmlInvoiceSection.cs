@@ -48,7 +48,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
         {
             var list = new List<AdditionalDocumentReference>();
             icv = string.IsNullOrWhiteSpace(icv) ? "1" : icv.Trim();
-            pih = string.IsNullOrWhiteSpace(pih) ? "0".ToSha256HexBase64() : pih.Trim();
+            pih = string.IsNullOrWhiteSpace(pih) || pih == "0"? "0".ToSha256HexBase64() : pih.Trim();
 
             var icvDoc = new AdditionalDocumentReference();
             icvDoc.ID = "ICV";
@@ -112,7 +112,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
             if(account.CommercialType == CompanyCommercialType.CRN || account.CommercialType == CompanyCommercialType.CTH)
             {
                 obj.Party.PartyTaxScheme = new AccountPartyTaxSchemeModel();
-                obj.Party.PartyTaxScheme.CompanyID = account.CommercialNumber;
+                obj.Party.PartyTaxScheme.CompanyID = account.TaxNumber;
 
                 obj.Party.PartyTaxScheme.TaxScheme = new TaxSchemeModel();
                 obj.Party.PartyTaxScheme.TaxScheme.ID = Transactions.VAT;
@@ -277,7 +277,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
 
                 obj.Amount = new AmountModel();
                 obj.Amount.CurrencyID = Transactions.DefaultCurrency;
-                obj.Amount.Value = allowance.Amount;
+                obj.Amount.Value = allowance.Amount.ToTwoDecimal();
                 
                 obj.TaxCategory = new TaxCategoryModel();
                 obj.TaxCategory.ID = allowance.TaxCategoryId.GetEnumDescription();
@@ -306,7 +306,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
             var obj = new TaxTotalModel();
             obj.TaxAmount = new AmountModel();
             obj.TaxAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.TaxAmount.Value = taxTotal.TotalTaxAmount;
+            obj.TaxAmount.Value = taxTotal.TotalTaxAmount.ToTwoDecimal();
             obj.RoundingAmount = null;
             obj.TaxSubtotals = new List<TaxSubtotalModel>();
             
@@ -316,11 +316,11 @@ namespace ZatcaIntegratorV2.XmlInvoice
 
                 sub.TaxableAmount = new AmountModel();
                 sub.TaxableAmount.CurrencyID = Transactions.DefaultCurrency;
-                sub.TaxableAmount.Value = item.TotalAmount;
+                sub.TaxableAmount.Value = item.TotalAmount.ToTwoDecimal();
 
                 sub.TaxAmount = new AmountModel();
                 sub.TaxAmount.CurrencyID = Transactions.DefaultCurrency;
-                sub.TaxAmount.Value = item.TaxAmount;
+                sub.TaxAmount.Value = item.TaxAmount.ToTwoDecimal();
 
                 sub.TaxCategory = new TaxCategoryModel();
                 sub.TaxCategory.TaxScheme = new TaxSchemeModel();
@@ -360,22 +360,22 @@ namespace ZatcaIntegratorV2.XmlInvoice
             var obj = new LegalMonetaryTotalModel();
             obj.LineExtensionAmount = new AmountModel();
             obj.LineExtensionAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.LineExtensionAmount.Value = legalMonetaryTotal.LineExtensionAmount ?? 0m;
+            obj.LineExtensionAmount.Value = legalMonetaryTotal.LineExtensionAmount.ToTwoDecimal();
 
             obj.TaxExclusiveAmount = new AmountModel();
             obj.TaxExclusiveAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.TaxExclusiveAmount.Value = legalMonetaryTotal.TaxExclusiveAmount ?? 0m;
+            obj.TaxExclusiveAmount.Value = legalMonetaryTotal.TaxExclusiveAmount.ToTwoDecimal();
 
             obj.TaxInclusiveAmount = new AmountModel();
             obj.TaxInclusiveAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.TaxInclusiveAmount.Value = legalMonetaryTotal.TaxInclusiveAmount ?? 0m;
+            obj.TaxInclusiveAmount.Value = legalMonetaryTotal.TaxInclusiveAmount.ToTwoDecimal();
 
 
             if (legalMonetaryTotal.AllowanceTotalAmount.HasValue)
             {
                 obj.AllowanceTotalAmount = new AmountModel();
                 obj.AllowanceTotalAmount.CurrencyID = Transactions.DefaultCurrency;
-                obj.AllowanceTotalAmount.Value = legalMonetaryTotal.AllowanceTotalAmount ?? 0;
+                obj.AllowanceTotalAmount.Value = legalMonetaryTotal.AllowanceTotalAmount.ToTwoDecimal();
             }
             else
             {
@@ -386,7 +386,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
             {
                 obj.ChargeTotalAmount = new AmountModel();
                 obj.ChargeTotalAmount.CurrencyID = Transactions.DefaultCurrency;
-                obj.ChargeTotalAmount.Value = legalMonetaryTotal.ChargeTotalAmount ?? 0m;
+                obj.ChargeTotalAmount.Value = legalMonetaryTotal.ChargeTotalAmount.ToTwoDecimal();
             }
             else
             {
@@ -396,13 +396,13 @@ namespace ZatcaIntegratorV2.XmlInvoice
            
             obj.PrepaidAmount = new AmountModel();
             obj.PrepaidAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.PrepaidAmount.Value = legalMonetaryTotal.PrepaidAmount ?? 0m;
+            obj.PrepaidAmount.Value = legalMonetaryTotal.PrepaidAmount.ToTwoDecimal();
 
             obj.PayableRoundingAmount = null;
 
             obj.PayableAmount = new AmountModel();
             obj.PayableAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.PayableAmount.Value = legalMonetaryTotal.PayableAmount ?? 0m;
+            obj.PayableAmount.Value = legalMonetaryTotal.PayableAmount.ToTwoDecimal();
 
             return obj;
         }
@@ -426,7 +426,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
                 
                 obj.LineExtensionAmount = new AmountModel();
                 obj.LineExtensionAmount.CurrencyID = Transactions.DefaultCurrency;
-                obj.LineExtensionAmount.Value = line.TotalAmount;
+                obj.LineExtensionAmount.Value = line.TotalAmount.ToTwoDecimal();
 
                 obj.LineExtensionAmountWithTax = null;
                 //obj.LineExtensionAmountWithTax = new AmountModel();
@@ -436,7 +436,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
                 obj.TaxTotal = new TaxTotalModel();
                 obj.TaxTotal.TaxAmount = new AmountModel();
                 obj.TaxTotal.TaxAmount.CurrencyID = Transactions.DefaultCurrency;
-                obj.TaxTotal.TaxAmount.Value = line.TaxAmount;
+                obj.TaxTotal.TaxAmount.Value = line.TaxAmount.ToTwoDecimal();
 
                 obj.TaxTotal.RoundingAmount = new AmountModel();
                 obj.TaxTotal.RoundingAmount.CurrencyID = Transactions.DefaultCurrency;
@@ -488,7 +488,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
                 obj.Price = new PriceModel();
                 obj.Price.PriceAmount = new AmountModel();
                 obj.Price.PriceAmount.CurrencyID = Transactions.DefaultCurrency;
-                obj.Price.PriceAmount.Value = line.PriceAmount;
+                obj.Price.PriceAmount.Value = line.PriceAmount.ToTwoDecimal();
 
                 list.Add(obj);
             }

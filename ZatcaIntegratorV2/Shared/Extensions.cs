@@ -247,14 +247,86 @@ namespace ZatcaIntegratorV2.Shared
         {
             try
             {
+                // Create XML serializer
                 var serializer = new XmlSerializer(typeof(InvoiceModel));
 
                 var settings = new XmlWriterSettings
                 {
                     Indent = true,
                     Encoding = new UTF8Encoding(false),
-                    //OmitXmlDeclaration = false
-                    OmitXmlDeclaration = true
+                    OmitXmlDeclaration = false // include XML declaration
+                };
+
+                // Define namespaces explicitly (including default namespace)
+                var ns = new XmlSerializerNamespaces();
+                ns.Add("", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"); // default namespace
+                ns.Add("cbc", UblNamespaces.Cbc);
+                ns.Add("cac", UblNamespaces.Cac);
+                ns.Add("ext", UblNamespaces.Ext);
+
+                // Serialize the invoice into a MemoryStream
+                using var ms = new MemoryStream();
+                using (var writer = XmlWriter.Create(ms, settings))
+                {
+                    serializer.Serialize(writer, invoice, ns);
+                }
+
+                // Convert bytes to string
+                ms.Position = 0;
+                string xml;
+                using (var reader = new StreamReader(ms, Encoding.UTF8))
+                {
+                    xml = reader.ReadToEnd();
+                }
+
+                // Load XML into XmlDocument
+                var doc = new XmlDocument();
+                doc.LoadXml(xml);
+
+                // Namespace manager including default namespace
+                var nsmgr = new XmlNamespaceManager(doc.NameTable);
+                nsmgr.AddNamespace("inv", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"); // default namespace
+                nsmgr.AddNamespace("cbc", UblNamespaces.Cbc);
+                nsmgr.AddNamespace("cac", UblNamespaces.Cac);
+
+                // Move schemeID from PartyIdentification element to its child ID element
+                var partyNodes = doc.SelectNodes("//cac:PartyIdentification", nsmgr);
+                if (partyNodes != null)
+                {
+                    foreach (XmlElement party in partyNodes)
+                    {
+                        string schemeID = party.GetAttribute("schemeID");
+                        if (!string.IsNullOrEmpty(schemeID))
+                            party.RemoveAttribute("schemeID");
+
+                        var idNode = party.SelectSingleNode("cbc:ID", nsmgr) as XmlElement;
+                        if (idNode != null && !string.IsNullOrEmpty(schemeID))
+                        {
+                            idNode.SetAttribute("schemeID", schemeID);
+                        }
+                    }
+                }
+
+                return doc.OuterXml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string SerializeInvoiceMap2(this InvoiceModel invoice)
+        {
+            try
+            {
+                var serializer = new XmlSerializer(typeof(InvoiceModel));
+
+                var settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    Encoding = new UTF8Encoding(false),
+                    OmitXmlDeclaration = false // include declaration
+                    //OmitXmlDeclaration = true
                 };
 
                 var ns = new XmlSerializerNamespaces();
@@ -384,6 +456,10 @@ namespace ZatcaIntegratorV2.Shared
             return Math.Round(value, 2, MidpointRounding.AwayFromZero);
         }
 
+        public static decimal ToTwoDecimal(this decimal? value)
+        {
+            return Math.Round(value??0, 2, MidpointRounding.AwayFromZero);
+        }
 
         public static EnvironmentType ToEnvironmentType(this ZatcaEnvironmentType environment)
         {

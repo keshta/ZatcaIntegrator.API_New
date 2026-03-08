@@ -25,7 +25,7 @@ namespace ZatcaIntegratorV2.Dto
         public decimal TotalAmount { get; set; }
         public decimal TaxAmount { get; set; }
         public VatCategoryCode TaxCategoryId { get; set; } = VatCategoryCode.Standard;
-        public string TaxExemptionReasonCode { get; set; }
+        public string? TaxExemptionReasonCode { get; set; }
         public string? TaxExemptionReason { get; set; }
     }
 
