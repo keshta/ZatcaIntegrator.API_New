@@ -6,7 +6,7 @@ namespace ZatcaIntegrator.API.IService
 {
     public interface ISingleInvoiceService
     {
-        Task<InvoiceSingleClearanceResultDto> ClearanceAsync(InvoiceSingleRequestModel model);
-        Task<InvoiceSingleReportingResultDto> ReportingAsync(InvoiceSingleRequestModel model);
+        Task<InvoiceSingleClearanceResultDto> ClearanceAsync(InvoiceSingleRequestDto model);
+        Task<InvoiceSingleReportingResultDto> ReportingAsync(InvoiceSingleRequestDto model);
     }
 }

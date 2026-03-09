@@ -23,6 +23,7 @@ builder.Services.AddTransient<IComplianceAPIService, ComplianceAPIService>();
 builder.Services.AddTransient<IInvoiceStandardService, InvoiceStandardService>();
 builder.Services.AddTransient<ISingleInvoiceService, SingleInvoiceService>();
 builder.Services.AddTransient<IEnvironmentService, EnvironmentService>();
+builder.Services.AddTransient<IDeviceConnectService, DeviceConnectService>();
 
 builder.Services.AddHttpContextAccessor();
 

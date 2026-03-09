@@ -9,6 +9,7 @@ using ZATCA.EInvoice.SDK.Contracts;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;
+using ZatcaIntegratorV2.XmlInvoice;
 
 namespace ZatcaIntegratorV2.Service
 {
@@ -17,13 +18,17 @@ namespace ZatcaIntegratorV2.Service
         IEInvoiceHashGenerator _eInvoiceHashGenerator = new EInvoiceHashGenerator();
         IEInvoiceSigner _eInvoiceSigner = new EInvoiceSigner();
         EInvoiceQRGenerator _eInvoiceQRGenerator = new EInvoiceQRGenerator();
+        IXmlInvoiceStandard  _xmlInvoiceStandard = new XmlInvoiceStandard();
 
         public InvoiceSingleService() { }
 
-        public async Task<InvoiceSingleClearanceResultDto> ClearanceAsync(ComplianceResponseDto compliance, string privateKey, XmlDocument xmlDocument, Guid uuid, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
+        public async Task<InvoiceSingleClearanceResultDto> ClearanceAsync(InvoiceSingleRequestDto invoice, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
         {
-            string csid = compliance.BinarySecurityToken.ToDecodeBase64();
-            var sign = _eInvoiceSigner.SignDocument(xmlDocument, csid, privateKey);
+            var xml = await GetInvoiceXml(invoice);
+            var xmlDocument = xml.ToXmlDocumentNormalize();
+
+            string csid = invoice.Compliance.BinarySecurityToken.ToDecodeBase64();
+            var sign = _eInvoiceSigner.SignDocument(xmlDocument, csid, invoice.PrivateKey);
             //var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(xmlDocument);
             var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(sign.SignedEInvoice);
             var qr = _eInvoiceQRGenerator.GenerateEInvoiceQRCode(sign.SignedEInvoice);
@@ -39,7 +44,7 @@ namespace ZatcaIntegratorV2.Service
             var requestBody = new
             {
                 invoiceHash = invoiceHash.Hash,
-                uuid = uuid.ToString(),
+                uuid = invoice.Uuid,
                 invoice = sign.SignedEInvoice.OuterXml.ToEncodeBase64()
             };
 
@@ -48,7 +53,7 @@ namespace ZatcaIntegratorV2.Service
             {
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(5);
-                string base64Auth = $"{compliance.BinarySecurityToken}:{compliance.Secret}".ToEncodeBase64();
+                string base64Auth = $"{invoice.Compliance.BinarySecurityToken}:{invoice.Compliance.Secret}".ToEncodeBase64();
 
                 // Required headers
                 client.DefaultRequestHeaders.Add("accept", "application/json");
@@ -62,7 +67,6 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonSerializer.Deserialize<InvoiceSingleClearanceResultDto>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -96,10 +100,12 @@ namespace ZatcaIntegratorV2.Service
             return result;
         }
 
-        public async Task<InvoiceSingleReportingResultDto> ReportingAsync(ComplianceResponseDto compliance, string privateKey, XmlDocument xmlDocument, Guid uuid, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
+        public async Task<InvoiceSingleReportingResultDto> ReportingAsync(InvoiceSingleRequestDto invoice, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
         {
-            string csid = compliance.BinarySecurityToken.ToDecodeBase64();
-            var sign = _eInvoiceSigner.SignDocument(xmlDocument, csid, privateKey);
+            var xml = await GetInvoiceXml(invoice);
+            var xmlDocument = xml.ToXmlDocumentNormalize();
+            string csid = invoice.Compliance.BinarySecurityToken.ToDecodeBase64();
+            var sign = _eInvoiceSigner.SignDocument(xmlDocument, csid, invoice.PrivateKey);
             //var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(xmlDocument);
             var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(sign.SignedEInvoice);
             var qr = _eInvoiceQRGenerator.GenerateEInvoiceQRCode(sign.SignedEInvoice);
@@ -115,7 +121,7 @@ namespace ZatcaIntegratorV2.Service
             var requestBody = new
             {
                 invoiceHash = invoiceHash.Hash,
-                uuid = uuid.ToString(),
+                uuid = invoice.Uuid,
                 invoice = sign.SignedEInvoice.OuterXml.ToEncodeBase64()
             };
 
@@ -124,7 +130,7 @@ namespace ZatcaIntegratorV2.Service
             {
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(5);
-                string base64Auth = $"{compliance.BinarySecurityToken}:{compliance.Secret}".ToEncodeBase64();
+                string base64Auth = $"{invoice.Compliance.BinarySecurityToken}:{invoice.Compliance.Secret}".ToEncodeBase64();
 
                 // Required headers
                 client.DefaultRequestHeaders.Add("accept", "application/json");
@@ -170,5 +176,26 @@ namespace ZatcaIntegratorV2.Service
 
             return result;
         }
+
+
+        private async Task<string> GetInvoiceXml(InvoiceSingleRequestDto model)
+        {
+            if (model == null)
+                return string.Empty;
+
+            if (model.SingleType == InvoiceSingleType.Standard)
+            {
+                if (model.DocumentType == InvoiceDocumentType.Credit)
+                    return await _xmlInvoiceStandard.GenerateXmlCreditAsync(model.InvoiceData);
+                else if (model.DocumentType == InvoiceDocumentType.Debit)
+                    return await _xmlInvoiceStandard.GenerateXmlDebitAsync(model.InvoiceData);
+
+                else
+                    return await _xmlInvoiceStandard.GenerateXmlInvoiceAsync(model.InvoiceData);
+            }
+
+            return string.Empty;
+        }
+
     }
 }

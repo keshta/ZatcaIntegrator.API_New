@@ -8,7 +8,7 @@ namespace ZatcaIntegratorV2.IService
 {
     public interface IInvoiceSingleService
     {
-        Task<InvoiceSingleClearanceResultDto> ClearanceAsync(ComplianceResponseDto compliance, string privateKey, XmlDocument xmlDocument, Guid uuid, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction);
-        Task<InvoiceSingleReportingResultDto> ReportingAsync(ComplianceResponseDto compliance, string privateKey, XmlDocument xmlDocument, Guid uuid, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction);
+        Task<InvoiceSingleClearanceResultDto> ClearanceAsync(InvoiceSingleRequestDto invoice, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction);
+        Task<InvoiceSingleReportingResultDto> ReportingAsync(InvoiceSingleRequestDto invoice, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction);
     }
 }

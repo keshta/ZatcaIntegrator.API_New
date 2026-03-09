@@ -26,8 +26,10 @@ namespace ZatcaIntegratorV2.Service
             if (string.IsNullOrWhiteSpace(request.CsrRequest.SerialNumber))
                 request.CsrRequest.SerialNumber = request.CsrRequest.CommercialName.ToSerialNo();
 
+            var envCsr = environment == ZatcaEnvironmentType.NonProduction ? ZatcaEnvironmentType.Simulation : environment;
+
             var result = new ConnectDeviceResultDto();
-            var generateResult = await _csrGeneratorService.GenerateAsync(request.CsrRequest, environment);
+            var generateResult = await _csrGeneratorService.GenerateAsync(request.CsrRequest, envCsr);
             if (!generateResult.IsSuccess)
             {
                 result = new ConnectDeviceResultDto

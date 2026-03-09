@@ -158,4 +158,17 @@ namespace ZatcaIntegratorV2.Shared
         StandardInvoice,
     }
 
+    public enum InvoiceSingleType
+    {
+        Standard = 1,   // Standard Invoice
+        Simplified  // Simplified Invoice
+    }
+
+    public enum InvoiceDocumentType
+    {
+        Invoice = 1,    // فاتورة
+        Credit,     // فاتورة ائتمان
+        Debit       // فاتورة خصم
+    }
+
 }

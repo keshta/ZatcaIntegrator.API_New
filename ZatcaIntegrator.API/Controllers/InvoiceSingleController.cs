@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ZatcaIntegrator.API.IService;
 using ZatcaIntegrator.API.Model;
+using ZatcaIntegratorV2.Dto;
 
 namespace ZatcaIntegrator.API.Controllers
 {
@@ -16,14 +17,14 @@ namespace ZatcaIntegrator.API.Controllers
         }
 
         [HttpPost("Clearance")]
-        public async Task<IActionResult> ClearanceAsync([FromBody] InvoiceSingleRequestModel model)
+        public async Task<IActionResult> ClearanceAsync([FromBody] InvoiceSingleRequestDto model)
         {
             return Ok(await _service.ClearanceAsync(model));
 
         }
 
         [HttpPost("Reporting")]
-        public async Task<IActionResult> ReportingAsync([FromBody] InvoiceSingleRequestModel model)
+        public async Task<IActionResult> ReportingAsync([FromBody] InvoiceSingleRequestDto model)
         {
             return Ok(await _service.ReportingAsync(model));
         }
