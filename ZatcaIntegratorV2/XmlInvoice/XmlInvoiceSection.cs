@@ -269,10 +269,13 @@ namespace ZatcaIntegratorV2.XmlInvoice
 
                     else
                         obj.AllowanceChargeReasonCode = allowance.ChargeReasonCode.GetEnumValueAsString();
+
+                    obj.AllowanceChargeReason = allowance.ChargeReason;
                 }
                 else
                 {
                     obj.AllowanceChargeReasonCode = null;
+                    obj.AllowanceChargeReason = null;
                 }
 
                 obj.Amount = new AmountModel();
@@ -303,10 +306,11 @@ namespace ZatcaIntegratorV2.XmlInvoice
             if (taxTotal == null) 
                 return null;
 
+            var totalTaxAmount = taxTotal.TaxSubtotals.Sum(s=>s.TaxAmount);
             var obj = new TaxTotalModel();
             obj.TaxAmount = new AmountModel();
             obj.TaxAmount.CurrencyID = Transactions.DefaultCurrency;
-            obj.TaxAmount.Value = taxTotal.TotalTaxAmount.ToTwoDecimal();
+            obj.TaxAmount.Value = totalTaxAmount.ToTwoDecimal(); //taxTotal.TotalTaxAmount.ToTwoDecimal();
             obj.RoundingAmount = null;
             obj.TaxSubtotals = new List<TaxSubtotalModel>();
             

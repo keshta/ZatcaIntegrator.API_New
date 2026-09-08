@@ -26,7 +26,7 @@ namespace ZatcaIntegrator.API.Service
             device.OTP = model.OTP;
             
             var supplier = SupplierMap(model);
-            var deviceResult = await _service.ConnectDeviceAsync(device, supplier);
+            var deviceResult = await _service.ConnectDeviceAsync(device, supplier, env);
             return deviceResult;
         }
 
@@ -35,7 +35,7 @@ namespace ZatcaIntegrator.API.Service
         {
             var obj = new CsrAndCsidRequestDto();
             obj.CommercialName = model.CommercialName;
-            obj.SerialNumber = model.CommercialName.ToSerialNo();
+            obj.SerialNumber = model.CommercialName.ToSerialNo();//model.CommercialNumber.ToSerialNo();
             obj.TaxNumber = model.TaxNumber;
             obj.TaxUnitName = model.TaxUnitName;
             obj.TaxCompanyName = model.TaxCompanyName;
@@ -57,7 +57,8 @@ namespace ZatcaIntegrator.API.Service
             obj.BuildNo = model.BuildNo;
             obj.CitySubdivisionName = model.CitySubdivisionName;
             obj.CityName = model.CityName;
-            obj.CountryCode = model.CountryCode;
+            obj.CountryCode = model.CountryCode??Transactions.DefaultCountryCode;
+            obj.PostalZone = model.PostalZone;
             return obj;
         }
 

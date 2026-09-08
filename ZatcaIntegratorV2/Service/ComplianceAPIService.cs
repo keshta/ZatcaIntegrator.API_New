@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml;
 using ZATCA.EInvoice.SDK;
 using ZATCA.EInvoice.SDK.Contracts;
@@ -28,7 +24,8 @@ namespace ZatcaIntegratorV2.Service
 
         public async Task<ComplianceResultDto> GetComplianceCSIDAsync(string csr, string otp, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
         {
-            
+            //environment = ZatcaEnvironmentType.Simulation;
+
             string url = environment switch
             {
                 ZatcaEnvironmentType.Production => "https://gw-fatoora.zatca.gov.sa/e-invoicing/core/compliance",
@@ -101,6 +98,107 @@ namespace ZatcaIntegratorV2.Service
             }
             catch (Exception ex)
             {
+                if (errorList == null)
+                    errorList = new();
+
+                if (errorList.Errors == null)
+                    errorList.Errors = new();
+
+                // Log full exception
+                errorList.Errors.Add(new ComplianceErrorDto
+                {
+                    Code = "Exception",
+                    Message = ex.Message
+                });
+            }
+
+            result.Errors = errorList.Errors;
+            return result;
+        }
+
+
+        public async Task<ComplianceResultDto> GetStampCSIDAsync(ComplianceResponseDto compliance, ZatcaEnvironmentType environment = ZatcaEnvironmentType.NonProduction)
+        {
+            string url = environment switch
+            {
+                ZatcaEnvironmentType.Production => "https://gw-fatoora.zatca.gov.sa/e-invoicing/core/production/csids",
+                ZatcaEnvironmentType.Simulation => "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/production/csids",
+                ZatcaEnvironmentType.NonProduction => "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/production/csids",
+                _ => throw new ArgumentOutOfRangeException(nameof(environment), "Invalid environment type")
+            };
+
+
+            var requestBody = new { compliance_request_id = compliance.RequestID };
+            var result = new ComplianceResultDto();
+            var errorList = new ComplianceErrorListDto();
+
+            try
+            {
+                string base64Auth = $"{compliance.BinarySecurityToken}:{compliance.Secret}".ToEncodeBase64();
+
+                using var client = new HttpClient();
+                client.Timeout = TimeSpan.FromMinutes(5);
+
+                // Required headers
+                client.DefaultRequestHeaders.Add("accept", "application/json");
+                client.DefaultRequestHeaders.Add("Accept-Version", "V2");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64Auth);
+
+                var json = JsonSerializer.Serialize(requestBody);
+                using var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                using var response = await client.PostAsync(url, content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+
+                    switch (response.StatusCode)
+                    {
+                        case HttpStatusCode.BadRequest: // 400
+                            errorList = JsonSerializer.Deserialize<ComplianceErrorListDto>(
+                                responseContent,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            ) ?? new ComplianceErrorListDto();
+                            break;
+
+                        case HttpStatusCode.NotAcceptable: // 406
+                            var singleError = JsonSerializer.Deserialize<ComplianceErrorDto>(
+                                responseContent,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            );
+                            if (singleError != null)
+                                errorList.Errors.Add(singleError);
+                            break;
+
+                        case HttpStatusCode.InternalServerError: // 500
+                            errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                            break;
+
+                        default:
+                            errorList.Errors.Add(new ComplianceErrorDto { Code = response.StatusCode.ToString(), Message = responseContent });
+                            break;
+                    }
+
+                }
+
+                else
+                {
+                    // Success: deserialize response
+                    result.Response = JsonSerializer.Deserialize<ComplianceResponseDto>(
+                        responseContent,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                if (errorList == null)
+                    errorList = new();
+
+                if (errorList.Errors == null)
+                    errorList.Errors = new();
+
                 // Log full exception
                 errorList.Errors.Add(new ComplianceErrorDto
                 {
@@ -149,11 +247,11 @@ namespace ZatcaIntegratorV2.Service
 
             var (simplifiedCreditUuid, simplifiedCreditXml) = InvoiceData.GetSimplifiedCredit(supplier);
             var (simplifiedDebitUuid, simplifiedDebitXml) = InvoiceData.GetSimplifiedDebit(supplier);
-            var (simplifiedInvoiceUuid, simplifiedInvoiceXml) = InvoiceData.GetSimplifiedDebit(supplier);
+            var (simplifiedInvoiceUuid, simplifiedInvoiceXml) = InvoiceData.GetSimplifiedInvoice(supplier);
 
             var (standardCreditUuid, standardCreditXml) = InvoiceData.GetStandardCredit(supplier);
             var (standardDebitUuid, standardDebitXml) = InvoiceData.GetStandardDebit(supplier);
-            var (standardInvoiceUuid, standardInvoiceXml) = InvoiceData.GetStandardDebit(supplier);
+            var (standardInvoiceUuid, standardInvoiceXml) = InvoiceData.GetStandardInvoice(supplier);
 
             var simplifiedCreditResult = await SendComplianceDocumnet(response, privateKey, xml: simplifiedCreditXml, uuid: simplifiedCreditUuid, environment);
             
@@ -231,6 +329,11 @@ namespace ZatcaIntegratorV2.Service
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    if (errorList == null)
+                        errorList = new();
+
+                    if (errorList.Errors == null)
+                        errorList.Errors = new ();
 
                     switch (response.StatusCode)
                     {
@@ -271,6 +374,12 @@ namespace ZatcaIntegratorV2.Service
             }
             catch (Exception ex)
             {
+                if (errorList == null)
+                    errorList = new();
+
+                if (errorList.Errors == null)
+                    errorList.Errors = new();
+
                 // Log full exception
                 errorList.Errors.Add(new ComplianceErrorDto
                 {

@@ -53,7 +53,12 @@ namespace ZatcaIntegratorV2.Service
             {
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(5);
-                string base64Auth = $"{invoice.Compliance.BinarySecurityToken}:{invoice.Compliance.Secret}".ToEncodeBase64();
+
+                var token = invoice.Compliance.BinarySecurityToken.Trim();
+                var secret = invoice.Compliance.Secret.Trim();
+                string base64Auth = $"{token}:{secret}".ToEncodeBase64();
+
+                //string base64Auth = $"{invoice.Compliance.BinarySecurityToken.Trim()}:{invoice.Compliance.Secret.Trim()}".ToEncodeBase64();
 
                 // Required headers
                 client.DefaultRequestHeaders.Add("accept", "application/json");
@@ -130,7 +135,12 @@ namespace ZatcaIntegratorV2.Service
             {
                 using var client = new HttpClient();
                 client.Timeout = TimeSpan.FromMinutes(5);
-                string base64Auth = $"{invoice.Compliance.BinarySecurityToken}:{invoice.Compliance.Secret}".ToEncodeBase64();
+
+                var token = invoice.Compliance.BinarySecurityToken.Trim();
+                var secret = invoice.Compliance.Secret.Trim();
+                string base64Auth = $"{token}:{secret}".ToEncodeBase64();
+
+                //string base64Auth = $"{invoice.Compliance.BinarySecurityToken.Trim()}:{invoice.Compliance.Secret.Trim()}".ToEncodeBase64();
 
                 // Required headers
                 client.DefaultRequestHeaders.Add("accept", "application/json");

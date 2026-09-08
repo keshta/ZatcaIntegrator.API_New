@@ -41,7 +41,7 @@ namespace ZatcaIntegratorV2.Service
             }
 
 
-            var complianceResult = await _complianceAPIService.GetComplianceCSIDAsync(generateResult.Data.CSR, otp: request.OTP);
+            var complianceResult = await _complianceAPIService.GetComplianceCSIDAsync(generateResult.Data.CSR, otp: request.OTP, environment);
 
             if (!complianceResult.IsSuccess)
             {
@@ -54,7 +54,7 @@ namespace ZatcaIntegratorV2.Service
                 return result;
             }
 
-            var signAllResult = await _complianceAPIService.SignAllDocumentAsync(complianceResult.Response, generateResult.Data.PrivateKey, supplier);
+            var signAllResult = await _complianceAPIService.SignAllDocumentAsync(complianceResult.Response, generateResult.Data.PrivateKey, supplier, environment);
             if (!signAllResult.IsSuccess)
             {
                 result = new ConnectDeviceResultDto
@@ -67,15 +67,41 @@ namespace ZatcaIntegratorV2.Service
 
             if (complianceResult.Response.DispositionMessage == Transactions.Issued)
             {
+                var stamp = await _complianceAPIService.GetStampCSIDAsync(complianceResult.Response, environment);
+                
+                if (!stamp.IsSuccess)
+                {
+                    result = new ConnectDeviceResultDto
+                    {
+                        IsSuccess = false,
+                        Errors = stamp.Errors
+                    };
+                    return result;
+                }
+
+
+                //var data = new ConnectDeviceResultDataDto
+                //{
+                //    Id = generateResult.Data.Id,
+                //    CSR = generateResult.Data.CSR,
+                //    PrivateKey = generateResult.Data.PrivateKey,
+                //    BinarySecurityToken = complianceResult.Response.BinarySecurityToken,
+                //    DispositionMessage = complianceResult.Response.DispositionMessage,
+                //    RequestID = complianceResult.Response.RequestID,
+                //    Secret = complianceResult.Response.Secret,
+                //    SerialNumber = request.CsrRequest.SerialNumber,
+                //};
+
+
                 var data = new ConnectDeviceResultDataDto
                 {
                     Id = generateResult.Data.Id,
                     CSR = generateResult.Data.CSR,
                     PrivateKey = generateResult.Data.PrivateKey,
-                    BinarySecurityToken = complianceResult.Response.BinarySecurityToken,
-                    DispositionMessage = complianceResult.Response.DispositionMessage,
-                    RequestID = complianceResult.Response.RequestID,
-                    Secret = complianceResult.Response.Secret,
+                    BinarySecurityToken = stamp.Response.BinarySecurityToken,
+                    DispositionMessage = stamp.Response.DispositionMessage,
+                    RequestID = stamp.Response.RequestID,
+                    Secret = stamp.Response.Secret,
                     SerialNumber = request.CsrRequest.SerialNumber,
                 };
 

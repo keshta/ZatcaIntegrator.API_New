@@ -38,7 +38,7 @@ namespace ZatcaIntegratorV2.Shared
         public static string ToSerialNo(this string value)
         {
             //1-ProviderName|2-Version|3-DeviceSN
-            string serialNo = $"1-{value}|2-2|3-{Guid.NewGuid()}";
+            string serialNo = $"1-{value}|2-V2.0.0.6|3-{Guid.NewGuid()}";
             return serialNo;
         }
 

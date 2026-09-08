@@ -22,7 +22,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoice = new InvoiceDto
             {
-                ID = "SME00015",
+                ID = "0015",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
@@ -33,7 +33,7 @@ namespace ZatcaIntegrator.API.Data
                 {
                     new InvoiceReturnDto
                     {
-                        Id = "SME00002",
+                        Id = "00002",
                         IssueDate = DateTime.UtcNow.AddDays(-1)
                     }
                 },
@@ -130,7 +130,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoiceDto = new InvoiceDto
             {
-                ID = "SME00016",
+                ID = "00016",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
@@ -140,7 +140,7 @@ namespace ZatcaIntegrator.API.Data
                 {
                     new InvoiceReturnDto
                     {
-                        Id = "SME00002",
+                        Id = "00002",
                         IssueDate = DateTime.UtcNow.AddDays(-2)
                     }
                 },
@@ -237,7 +237,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoice = new InvoiceDto
             {
-                ID = "SME00010",
+                ID = "00010",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
@@ -340,7 +340,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoice = new InvoiceDto
             {
-                ID = "SME00015",
+                ID = "00015",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
@@ -438,7 +438,7 @@ namespace ZatcaIntegrator.API.Data
                 {
                     new InvoiceReturnDto
                     {
-                        Id = "SME00002",
+                        Id = "00002",
                         IssueDate = DateTime.UtcNow.AddDays(-3)
                     }
                 },
@@ -452,7 +452,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoice = new InvoiceDto
             {
-                ID = "SME00016",
+                ID = "00016",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
@@ -550,7 +550,7 @@ namespace ZatcaIntegrator.API.Data
     {
         new InvoiceReturnDto
         {
-            Id = "SME00002"
+            Id = "00002"
         }
     },
 
@@ -563,7 +563,7 @@ namespace ZatcaIntegrator.API.Data
         {
             var invoice = new InvoiceDto
             {
-                ID = "SME00023",
+                ID = "00023",
                 UUID = Guid.NewGuid(),
                 IssueDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
                 IssueTime = DateTime.UtcNow.ToString("HH:mm:ss"),
