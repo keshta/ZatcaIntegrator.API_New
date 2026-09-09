@@ -31,8 +31,8 @@ namespace ZatcaIntegratorV2.Dto
         public string Category { get; set; }             // For 500
         public string Code { get; set; }                 // For 500
         public string? InvoiceHash { get; set; }          
-        public string? UUID { get; set; }          
-
+        public string? UUID { get; set; }
+        public string ResponseJson { get; set; }
     }
 
     public class InvoiceSingleClearanceValidationResultsDto

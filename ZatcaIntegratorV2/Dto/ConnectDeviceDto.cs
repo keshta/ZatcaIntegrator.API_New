@@ -14,6 +14,7 @@ namespace ZatcaIntegratorV2.Dto
         public ConnectDeviceResultDataDto Data { get; set; }
         public bool IsSuccess { get; set; }
         public List<ComplianceErrorDto> Errors { get; set; }
+        public string? ResponseJson { get; set; }
     }
 
     public class ConnectDeviceResultDataDto : CsrGeneratorDto

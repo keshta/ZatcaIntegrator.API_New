@@ -33,6 +33,7 @@ namespace ZatcaIntegratorV2.Dto
         public string? Message { get; set; }
         public string? InvoiceHash { get; set; }
         public string? UUID { get; set; }
+        public string? ResponseJson { get; set; }
     }
 
     public class InvoiceSingleReportingValidationResultsDto

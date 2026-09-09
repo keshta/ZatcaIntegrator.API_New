@@ -48,7 +48,8 @@ namespace ZatcaIntegratorV2.Service
                 result = new ConnectDeviceResultDto
                 {
                     IsSuccess = false,
-                    Errors = complianceResult.Errors
+                    Errors = complianceResult.Errors,
+                    ResponseJson = complianceResult.ResponseJson
                 };
 
                 return result;
@@ -60,7 +61,8 @@ namespace ZatcaIntegratorV2.Service
                 result = new ConnectDeviceResultDto
                 {
                     IsSuccess = false,
-                    Errors = signAllResult.Errors
+                    Errors = signAllResult.Errors,
+                    ResponseJson = signAllResult.ResponseJson
                 };
                 return result;
             }
@@ -74,7 +76,8 @@ namespace ZatcaIntegratorV2.Service
                     result = new ConnectDeviceResultDto
                     {
                         IsSuccess = false,
-                        Errors = stamp.Errors
+                        Errors = stamp.Errors,
+                        ResponseJson = stamp.ResponseJson
                     };
                     return result;
                 }
@@ -108,6 +111,7 @@ namespace ZatcaIntegratorV2.Service
                 result = new ConnectDeviceResultDto
                 {
                     Data = data,
+                    ResponseJson = stamp.ResponseJson,
                     IsSuccess = true,
                 };
             }

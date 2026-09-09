@@ -55,6 +55,8 @@ namespace ZatcaIntegratorV2.Service
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
+                result.ResponseJson = responseContent;
+
                 if (!response.IsSuccessStatusCode)
                 {
 
@@ -77,7 +79,13 @@ namespace ZatcaIntegratorV2.Service
                             break;
 
                         case HttpStatusCode.InternalServerError: // 500
-                            errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                                                                 //errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                            var serverError = JsonSerializer.Deserialize<ComplianceErrorDto>(
+                               responseContent,
+                               new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                           );
+                            if (serverError != null)
+                                errorList.Errors.Add(serverError);
                             break;
 
                         default:
@@ -149,7 +157,7 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
-
+                result.ResponseJson = responseContent;
                 if (!response.IsSuccessStatusCode)
                 {
 
@@ -172,7 +180,15 @@ namespace ZatcaIntegratorV2.Service
                             break;
 
                         case HttpStatusCode.InternalServerError: // 500
-                            errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                            //errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+
+                            var serverError = JsonSerializer.Deserialize<ComplianceErrorDto>(
+                                responseContent,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            );
+                            if (serverError != null)
+                                errorList.Errors.Add(serverError);
+
                             break;
 
                         default:
@@ -326,6 +342,7 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
+                result.ResponseJson = responseContent;
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -354,7 +371,13 @@ namespace ZatcaIntegratorV2.Service
                             break;
 
                         case HttpStatusCode.InternalServerError: // 500
-                            errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                                                                 //errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                            var serverError = JsonSerializer.Deserialize<ComplianceErrorDto>(
+                               responseContent,
+                               new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                           );
+                            if (serverError != null)
+                                errorList.Errors.Add(serverError);
                             break;
 
                         default:
@@ -439,6 +462,7 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
+                result.ResponseJson = responseContent;
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -462,7 +486,13 @@ namespace ZatcaIntegratorV2.Service
                             break;
 
                         case HttpStatusCode.InternalServerError: // 500
-                            errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                                                                 //errorList.Errors.Add(new ComplianceErrorDto { Code = "", Message = responseContent });
+                            var serverError = JsonSerializer.Deserialize<ComplianceErrorDto>(
+                               responseContent,
+                               new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                           );
+                            if (serverError != null)
+                                errorList.Errors.Add(serverError);
                             break;
 
                         default:

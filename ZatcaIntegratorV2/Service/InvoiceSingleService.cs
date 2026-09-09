@@ -87,6 +87,7 @@ namespace ZatcaIntegratorV2.Service
                 result.StatusCode = (int)response.StatusCode;
                 result.InvoiceHash = requestBody.invoiceHash;
                 result.UUID = requestBody.uuid;
+                result.ResponseJson = responseContent;
             }
             catch (Exception ex)
             {
@@ -169,6 +170,7 @@ namespace ZatcaIntegratorV2.Service
                 result.StatusCode = (int)response.StatusCode;
                 result.InvoiceHash = requestBody.invoiceHash;
                 result.UUID = requestBody.uuid;
+                result.ResponseJson = responseContent;
             }
             catch (Exception ex)
             {
