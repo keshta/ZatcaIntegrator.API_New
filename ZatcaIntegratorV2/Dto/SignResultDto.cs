@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using ZATCA.EInvoice.SDK.Contracts.Models;
+using Zatca.EInvoice.SDK.Contracts.Models;
 
 namespace ZatcaIntegratorV2.Dto
 {

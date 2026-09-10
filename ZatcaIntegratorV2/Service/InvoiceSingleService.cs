@@ -4,8 +4,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using ZATCA.EInvoice.SDK;
-using ZATCA.EInvoice.SDK.Contracts;
+using Zatca.EInvoice.SDK;
+using Zatca.EInvoice.SDK.Contracts;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;
@@ -72,6 +72,7 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
+                
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -155,6 +156,7 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
+
                 if (!response.IsSuccessStatusCode)
                 {
                     if(response.StatusCode == HttpStatusCode.Unauthorized)

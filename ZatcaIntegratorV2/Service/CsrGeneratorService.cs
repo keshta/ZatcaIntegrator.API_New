@@ -1,6 +1,6 @@
 ﻿using System;
-using ZATCA.EInvoice.SDK.Contracts;
-using ZATCA.EInvoice.SDK.Contracts.Models;
+using Zatca.EInvoice.SDK.Contracts;
+using Zatca.EInvoice.SDK.Contracts.Models;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;

@@ -1,6 +1,7 @@
 ﻿using System;
-using ZATCA.EInvoice.SDK;
-using ZATCA.EInvoice.SDK.Contracts;
+using System.Security.Cryptography;
+using Zatca.EInvoice.SDK;
+using Zatca.EInvoice.SDK.Contracts;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;
@@ -30,6 +31,7 @@ namespace ZatcaIntegratorV2.Service
 
             var result = new ConnectDeviceResultDto();
             var generateResult = await _csrGeneratorService.GenerateAsync(request.CsrRequest, envCsr);
+
             if (!generateResult.IsSuccess)
             {
                 result = new ConnectDeviceResultDto

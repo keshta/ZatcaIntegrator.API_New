@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Xml;
 using System.Xml.Serialization;
 using ZatcaIntegratorV2.Model;
-using ZATCA.EInvoice.SDK.Contracts.Models;
+using Zatca.EInvoice.SDK.Contracts.Models;
 
 namespace ZatcaIntegratorV2.Shared
 {

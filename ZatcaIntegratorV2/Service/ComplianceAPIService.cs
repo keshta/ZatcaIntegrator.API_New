@@ -4,8 +4,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using ZATCA.EInvoice.SDK;
-using ZATCA.EInvoice.SDK.Contracts;
+using Zatca.EInvoice.SDK;
+using Zatca.EInvoice.SDK.Contracts;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Model;
@@ -54,12 +54,13 @@ namespace ZatcaIntegratorV2.Service
 
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
-
+                result.IsSuccess = true;
+                result.StatusCode = (int)response.StatusCode;
                 result.ResponseJson = responseContent;
 
                 if (!response.IsSuccessStatusCode)
                 {
-
+                    result.IsSuccess = false;
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.BadRequest: // 400
@@ -158,9 +159,12 @@ namespace ZatcaIntegratorV2.Service
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 result.ResponseJson = responseContent;
+                result.IsSuccess = true;
+                result.StatusCode = (int)response.StatusCode;
+                
                 if (!response.IsSuccessStatusCode)
                 {
-
+                    result.IsSuccess = false;
                     switch (response.StatusCode)
                     {
                         case HttpStatusCode.BadRequest: // 400
@@ -297,8 +301,10 @@ namespace ZatcaIntegratorV2.Service
 
             if (!standardInvoiceResult.IsSuccess)
                 return standardInvoiceResult;
-            
-            return new ComplianceResultDto();
+
+            var result = new ComplianceResultDto();
+            result.IsSuccess = true;
+            return result;
         }
 
 
@@ -343,9 +349,12 @@ namespace ZatcaIntegratorV2.Service
                 using var response = await client.PostAsync(url, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
                 result.ResponseJson = responseContent;
+                result.IsSuccess = true;
+                result.StatusCode = (int)response.StatusCode;
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    result.IsSuccess = false;
                     if (errorList == null)
                         errorList = new();
 

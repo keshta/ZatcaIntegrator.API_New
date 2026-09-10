@@ -31,7 +31,8 @@ namespace ZatcaIntegratorV2.Dto
     {
         public ComplianceResponseDto Response { get; set; } = new ComplianceResponseDto();
         public List<ComplianceErrorDto> Errors { get; set; } = new List<ComplianceErrorDto>();
-        public bool IsSuccess => Errors == null || Errors.Count == 0;
+        public bool IsSuccess { get; set; } //=> Errors == null || Errors.Count == 0;
         public string ResponseJson { get; set; }
+        public int StatusCode { get; set; }
     }
 }

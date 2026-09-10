@@ -7,30 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>bin\Debug\net8.0\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="saxon">
-      <HintPath>bin\Debug\net8.0\saxon.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Pkcs">
-      <HintPath>bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Xml">
-      <HintPath>bin\Debug\net8.0\System.Security.Cryptography.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="xerces">
-      <HintPath>bin\Debug\net8.0\xerces.dll</HintPath>
-    </Reference>
-    <Reference Include="ZATCA.EInvoice.SDK">
-      <HintPath>bin\Debug\net8.0\ZATCA.EInvoice.SDK.dll</HintPath>
-    </Reference>
-    <Reference Include="ZATCA.EInvoice.SDK.Contracts">
-      <HintPath>bin\Debug\net8.0\ZATCA.EInvoice.SDK.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="ZATCA.EInvoice.SDK.Saxon">
-      <HintPath>bin\Debug\net8.0\ZATCA.EInvoice.SDK.Saxon.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Zatca.EInvoice.SDK" Version="2.2.0" />
   </ItemGroup>
 
 </Project>
