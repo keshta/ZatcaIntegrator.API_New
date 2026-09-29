@@ -16,6 +16,12 @@ namespace ZatcaIntegrator.API.Controllers
             _service = service;
         }
 
+        [HttpPost("GetList")]
+        public async Task<IActionResult> GetList([FromBody] ConnectDeviceRequestModel model)
+        {
+            return Ok(await _service.ConnectDeviceAsync(model));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ConnectDeviceRequestModel model)
         {

@@ -107,7 +107,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
             obj.Party.PostalAddress.PostalZone = account.PostalZone;
 
             obj.Party.PostalAddress.Country = new AccountCountryModel();
-            obj.Party.PostalAddress.Country.IdentificationCode = Transactions.DefaultCountryCode;
+            obj.Party.PostalAddress.Country.IdentificationCode = account.IsoCode??Transactions.DefaultCountryCode;
 
             if(account.CommercialType == CompanyCommercialType.CRN || account.CommercialType == CompanyCommercialType.CTH)
             {
@@ -145,7 +145,7 @@ namespace ZatcaIntegratorV2.XmlInvoice
             obj.Party.PostalAddress.PostalZone = account.PostalZone;
 
             obj.Party.PostalAddress.Country = new AccountCountryModel();
-            obj.Party.PostalAddress.Country.IdentificationCode = Transactions.DefaultCountryCode;
+            obj.Party.PostalAddress.Country.IdentificationCode = account.IsoCode?? Transactions.DefaultCountryCode;
 
             if (account.CommercialType == CompanyCommercialType.CRN || account.CommercialType == CompanyCommercialType.CTH)
             {
@@ -162,8 +162,11 @@ namespace ZatcaIntegratorV2.XmlInvoice
             if (account.CommercialType == CompanyCommercialType.OTH)
             {
                 obj.Party.PartyIdentification = new AccountPartyIdentificationModel();
-                obj.Party.PartyIdentification.ID = account.CommercialNumber;
+                obj.Party.PartyIdentification.ID = account.TaxNumber;
                 obj.Party.PartyIdentification.SchemeID = account.CommercialType.GetEnumDescription();
+
+                obj.Party.PartyLegalEntity = new AccountPartyLegalEntityModel();
+                obj.Party.PartyLegalEntity.RegistrationName = account.TaxCompanyName;
             }
 
             else

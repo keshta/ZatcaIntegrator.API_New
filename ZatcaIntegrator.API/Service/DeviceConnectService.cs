@@ -42,7 +42,7 @@ namespace ZatcaIntegrator.API.Service
             obj.InvoiceType = model.InvoiceType;
             obj.LocationAddress = model.LocationAddress;
             obj.IndustryBusinessCategory = model.IndustryBusinessCategory;
-            obj.CountryName = Transactions.DefaultCountryCode;
+            obj.CountryName = model.IsoCode??Transactions.DefaultCountryCode;
             return obj;
         }
 
@@ -57,8 +57,8 @@ namespace ZatcaIntegrator.API.Service
             obj.BuildNo = model.BuildNo;
             obj.CitySubdivisionName = model.CitySubdivisionName;
             obj.CityName = model.CityName;
-            obj.CountryCode = model.CountryCode??Transactions.DefaultCountryCode;
             obj.PostalZone = model.PostalZone;
+            obj.IsoCode = model.IsoCode??Transactions.DefaultCountryCode;
             return obj;
         }
 

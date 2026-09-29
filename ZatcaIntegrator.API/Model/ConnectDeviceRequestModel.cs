@@ -11,6 +11,7 @@ namespace ZatcaIntegrator.API.Model
         [Required(AllowEmptyStrings = false)]
         public string CommercialName { get; set; }
 
+
         [Required(AllowEmptyStrings = false)]
         public string TaxUnitName { get; set; }
 

@@ -67,7 +67,7 @@ namespace ZatcaIntegratorV2.Model
             fullXml = fullXml.Replace("@CitySubdivisionName", supplier.CitySubdivisionName);
             fullXml = fullXml.Replace("@CityName", supplier.CityName);
             fullXml = fullXml.Replace("@PostalZone", supplier.PostalZone);
-            fullXml = fullXml.Replace("@CountryCode", supplier.CountryCode);
+            fullXml = fullXml.Replace("@CountryCode", supplier.IsoCode??Transactions.DefaultCountryCode);
             fullXml = fullXml.Replace("@CompanyId", supplier.TaxNumber);
             fullXml = fullXml.Replace("@RegistrationName", supplier.TaxCompanyName);
             fullXml = fullXml.Replace("@ActualDeliveryDate", DateTime.UtcNow.ToDateInvoice());

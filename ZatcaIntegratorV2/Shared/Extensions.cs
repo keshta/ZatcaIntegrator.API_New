@@ -125,13 +125,44 @@ namespace ZatcaIntegratorV2.Shared
 
 
         // Decode Base64 UTF-8 to string
+
         public static string ToDecodeBase64(this string base64)
         {
-            if (string.IsNullOrEmpty(base64))
-                return string.Empty;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(base64))
+                    return string.Empty;
 
-            var bytes = Convert.FromBase64String(base64);
-            return Encoding.UTF8.GetString(bytes);
+                base64 = base64.Trim()
+                    .Replace("\r", "")
+                    .Replace("\n", "")
+                    .Replace(" ", "");
+
+                var bytes = Convert.FromBase64String(base64);
+
+                return Encoding.UTF8.GetString(bytes);
+            }
+            catch (Exception ex)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string ToDecodeBase642(this string base64)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(base64))
+                    return string.Empty;
+
+                var bytes = Convert.FromBase64String(base64);
+                return Encoding.UTF8.GetString(bytes);
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
 
         public static string FromBase64Utf8(this long? base64)
