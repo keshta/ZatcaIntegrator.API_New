@@ -1,8 +1,12 @@
 ﻿using System.Xml;
+using Zatca.EInvoice.SDK;
+using Zatca.EInvoice.SDK.Contracts;
+using Zatca.EInvoice.SDK.Utilities;
 using ZatcaIntegrator.API.IService;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;
+using ZatcaIntegratorV2.XmlInvoice;
 //using ZatcaIntegratorV2.Shared;
 
 namespace ZatcaIntegrator.API.Service
@@ -13,7 +17,11 @@ namespace ZatcaIntegrator.API.Service
         private readonly IComplianceAPIService _complianceAPIService;
         private readonly IEnvironmentService _environmentService;
         private readonly IInvoiceStandardService _invoiceStandardService;
-        
+        IEInvoiceHashGenerator _eInvoiceHashGenerator = new EInvoiceHashGenerator();
+        IEInvoiceSigner _eInvoiceSigner = new EInvoiceSigner();
+        EInvoiceQRGenerator _eInvoiceQRGenerator = new EInvoiceQRGenerator();
+        IXmlInvoiceStandard _xmlInvoiceStandard = new XmlInvoiceStandard();
+
         public SingleInvoiceService(IInvoiceSingleService invoiceSingleService,
                                     IComplianceAPIService complianceAPIService,
                                     IEnvironmentService environmentService,
@@ -56,6 +64,60 @@ namespace ZatcaIntegrator.API.Service
 
             return result;
         }
+
+        public async Task<InvoiceSingleQrCodeResultDto> GetQrCodeAsync(InvoiceSingleRequestDto model)
+        {
+            var result = new InvoiceSingleQrCodeResultDto();
+            try
+            {
+                var uuid = Guid.Parse(model.Uuid);
+                //var xml = await GetInvoiceXml(model);
+                //var xmlDocument = xml.ToXmlDocumentNormalize();
+                var env = await _environmentService.GetCurrentEnvironmentAsync();
+
+                var xml = await GetInvoiceXml(model);
+                var xmlDocument = xml.ToXmlDocumentNormalize();
+                string csid = model.Compliance.BinarySecurityToken.ToDecodeBase64();
+                var sign = _eInvoiceSigner.SignDocument(xmlDocument, csid, model.PrivateKey);
+                //var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(xmlDocument);
+                var invoiceHash = _eInvoiceHashGenerator.GenerateEInvoiceHashing(sign.SignedEInvoice);
+                //var qr = _eInvoiceQRGenerator.GenerateEInvoiceQRCode(sign.SignedEInvoice);
+                if (sign != null)
+                {
+                    if (sign.IsValid)
+                    {
+                        result.StatusCode = 200;
+                        result.InvoiceQrCode = sign.SignedEInvoice._GetQR_CODE();
+                    }
+                    else
+                    {
+                        result.StatusCode = 400;
+                        result.Error = sign.ErrorMessage;
+                    }
+                }
+                else
+                {
+                    result.StatusCode = 500;
+                    result.Error = "Failed to generate QR code.";
+                }
+            }
+            catch (Exception ex)
+            {
+                string msg = "";
+                result.StatusCode = 500;
+
+                if (ex.InnerException != null)
+                    msg = $"InnerException: {ex.InnerException.Message} " + Environment.NewLine;
+
+                if (!string.IsNullOrEmpty(msg))
+                    result.Error = $"{ex.Message}: {msg} "+ Environment.NewLine;
+                else
+                    result.Error = ex.Message;
+            }
+
+            return result;
+        }
+
 
         private async Task<string> GetInvoiceXml(InvoiceSingleRequestDto model)
         {

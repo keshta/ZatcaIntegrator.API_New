@@ -8,5 +8,6 @@ namespace ZatcaIntegrator.API.IService
     {
         Task<InvoiceSingleClearanceResultDto> ClearanceAsync(InvoiceSingleRequestDto model);
         Task<InvoiceSingleReportingResultDto> ReportingAsync(InvoiceSingleRequestDto model);
+        Task<InvoiceSingleQrCodeResultDto> GetQrCodeAsync(InvoiceSingleRequestDto model);
     }
 }

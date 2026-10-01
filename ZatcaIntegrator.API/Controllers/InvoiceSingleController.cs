@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ZatcaIntegrator.API.IService;
-using ZatcaIntegrator.API.Model;
 using ZatcaIntegratorV2.Dto;
 
 namespace ZatcaIntegrator.API.Controllers
@@ -30,6 +28,14 @@ namespace ZatcaIntegrator.API.Controllers
         {
             return Ok(await _service.ReportingAsync(model));
         }
+
+        [ProducesResponseType(typeof(InvoiceSingleQrCodeResultDto), 200)]
+        [HttpPost("GetQrCode")]
+        public async Task<IActionResult> GetQrCode([FromBody] InvoiceSingleRequestDto model)
+        {
+            return Ok(await _service.GetQrCodeAsync(model));
+        }
+
 
     }
 }

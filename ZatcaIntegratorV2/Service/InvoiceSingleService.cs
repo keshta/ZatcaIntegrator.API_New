@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Xml;
 using Zatca.EInvoice.SDK;
 using Zatca.EInvoice.SDK.Contracts;
+using Zatca.EInvoice.SDK.Utilities;
 using ZatcaIntegratorV2.Dto;
 using ZatcaIntegratorV2.IService;
 using ZatcaIntegratorV2.Shared;
@@ -89,6 +90,7 @@ namespace ZatcaIntegratorV2.Service
                 result.InvoiceHash = requestBody.invoiceHash;
                 result.UUID = requestBody.uuid;
                 result.ResponseJson = responseContent;
+                result.InvoiceQrCode = sign.SignedEInvoice._GetQR_CODE();
             }
             catch (Exception ex)
             {
@@ -173,6 +175,7 @@ namespace ZatcaIntegratorV2.Service
                 result.InvoiceHash = requestBody.invoiceHash;
                 result.UUID = requestBody.uuid;
                 result.ResponseJson = responseContent;
+                result.InvoiceQrCode = sign.SignedEInvoice._GetQR_CODE();
             }
             catch (Exception ex)
             {
