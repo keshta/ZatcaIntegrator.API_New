@@ -16,6 +16,7 @@ namespace ZatcaIntegrator.API.Controllers
             _service = service;
         }
 
+        [ProducesResponseType(typeof(InvoiceSingleClearanceResultDto), 200)]
         [HttpPost("Clearance")]
         public async Task<IActionResult> ClearanceAsync([FromBody] InvoiceSingleRequestDto model)
         {
@@ -23,6 +24,7 @@ namespace ZatcaIntegrator.API.Controllers
 
         }
 
+        [ProducesResponseType(typeof(InvoiceSingleReportingResultDto), 200)]
         [HttpPost("Reporting")]
         public async Task<IActionResult> ReportingAsync([FromBody] InvoiceSingleRequestDto model)
         {
